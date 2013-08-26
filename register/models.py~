@@ -1,0 +1,10 @@
+from django.db import models
+
+class UserForm(django.forms.ModelForm)
+	class Meta:
+		model = User
+
+class UserProfileForm(django.forms.ModelForm)
+	class Meta:
+		model = UserProfile
+		exclude = ['user']

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block head %}
+<title> US Vending Machine Service | Registration Page </title>
+{% endblock %}
+
+{% block body %}
+
+	<header>
+		<h1>US Cashless Vending Machine Service</h1>
+		<h2>Please enter your details in the fields below</h2>
+	</header>
+	
+	<section>
+		{% if form.errors %}
+			<p>The details you've entered are invalid. Please check and submit again.</p>
+		{% endif %}	
+		
+		<form method="POST" action=""> {% csrf_token %}
+    		<p>Username:</p> 
+    		{{ form.username }}	
+    		<p>E-mail adress:</p>
+    		{{ form.email }}
+    		<p>Password:</p>
+    		{{ form.password }}
+    		
+    		<p><input type="submit"></p>
+		</form>
+		
+	</section>	
+		
+{% endblock %}
+

@@ -1,0 +1,97 @@
+from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from display_qrcode.models import ProductData
+
+from Crypto.PublicKey import RSA 
+from Crypto.Hash import MD5
+
+#from PyQRNative import *
+import qrcode
+
+import base64
+import random
+
+@login_required
+def image(request):
+    try:
+        input_product_code = str(request.session['session_code'])    
+    except:
+        return HttpResponse("Please scan a valid QR code.")
+    
+    request.session.set_expiry(1)    
+    
+    server_priv_key_file = open('server_key.priv')
+    server_priv_key = RSA.importKey(server_priv_key_file.read())
+    server_priv_key_file.close()
+    
+    vending_pub_key_file = open('vending_key.pub')
+    vending_pub_key = RSA.importKey(vending_pub_key_file.read())
+    vending_pub_key_file.close()
+    
+    try:
+        encoded_data = input_product_code.split('[]', 2)
+    
+        encoded_data_block_1 = encoded_data[0]
+        encoded_data_block_2 = encoded_data[1]
+    
+        decoded_data_block_1 = base64.urlsafe_b64decode(encoded_data_block_1)                    #encrypted with server public key
+        decoded_data_block_2 = base64.urlsafe_b64decode(encoded_data_block_2)                    #encrypted with vending machine private key
+    
+        decrypted_product_code = server_priv_key.decrypt(decoded_data_block_1)
+        product_code = decrypted_product_code.split('&')[1]
+    
+        hash_code = MD5.new(decrypted_product_code).digest()
+        verify_test = vending_pub_key.verify(hash_code, [long(decoded_data_block_2), ])
+        
+    except:
+        return HttpResponse('This code has an invalid format. Please rescan the QR Code.')
+    
+    if verify_test != True:
+        return HttpResponse('The origin of this QR Code could not be verified. Please contact your administrator')
+    
+    try:
+        profile = request.user.get_profile()
+    except:
+        return HttpResponse("Profile does not exist yet")
+
+    try:                            #get details of current user
+        product = ProductData.objects.get(product_code = product_code)
+    except:
+        return HttpResponse("Invalid product code")
+    
+    user_balance = profile.balance
+    price = product.product_price
+
+    if  user_balance > price:
+        user_balance = user_balance - price
+        profile.balance = user_balance
+        profile.save()
+        
+        confirm_code_string = str(random.randint(0, 255)) + "&accepted" 
+        encrypted_confirm_code = vending_pub_key.encrypt(confirm_code_string, 32)
+       
+        
+        return_hash_code = MD5.new(confirm_code_string).digest()
+        return_verification_code = server_priv_key.sign(return_hash_code, '')
+        
+        encoded_confirm_code = base64.b64encode(encrypted_confirm_code[0])
+        encoded_verification_code = base64.b64encode(str(return_verification_code[0]))  
+        
+        qr = qrcode.QRCode(
+                           version = None,
+                           box_size = 3,
+                           )
+    
+        qr.add_data(encoded_confirm_code + "[]" + encoded_verification_code)
+        qr.make(fit = True)
+    
+        im = qr.make_image()
+
+        #import pdb;pdb.set_trace()
+        
+        response = HttpResponse(mimetype="image/png")
+        im.save(response, "PNG")
+        return response
+
+    else:
+        return HttpResponse("Not enough credits. Please load some more and scan the QR Code again.")

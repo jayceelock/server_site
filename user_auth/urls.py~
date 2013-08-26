@@ -1,0 +1,7 @@
+from django.conf.urls import patterns, url, include
+from user_auth import views
+
+urlpatterns = patterns('',
+	url(r'^(?P<machine_token>\w+)/$', views.login_page), 
+	#url(r'(?P<machine_token>\w+)$', 'django.contrib.auth.views.login'), 
+)

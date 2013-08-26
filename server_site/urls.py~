@@ -1,0 +1,17 @@
+from django.conf.urls import patterns, include, url
+from vending_site.views import *
+from django.contrib import admin
+from encryption.views import *
+
+admin.autodiscover()
+
+urlpatterns = patterns('',
+	url(r'^admin/', include(admin.site.urls)),
+	url(r'^display_qrcode/', include('display_qrcode.urls')),
+	url(r'^register/', include('register.urls')),
+	url(r'^', include('encryption.urls')),  
+
+	url(r'^', include('user_auth.urls')), 	
+)
+
+generate_key()

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <title>US Cashless Vending Machine Service | No Code </title>
+{% endblock %}
+
+{% block body %}
+    <section>
+    <header>
+        <h1>US Cashless Vending Machine Service</h1>
+    </header>
+	<p>This site is reserved for US Vending Machine Service clients only. Please scan a QR code to continue, or log in to view your balance</p>
+	<p><a href="/login"> Login page</a></p>
+	<p><a href="/user_admin"> Balance </a><p>
+   </section>
+{% endblock %}

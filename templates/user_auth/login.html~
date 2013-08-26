@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% comment %}
+ 
+Login page to authenticate users.
+ 
+{% endcomment %}
+ 
+{% block head %}
+    <title>US Cashless Vending Machine Service | Login</title>
+{% endblock %}
+ 
+{% block body %}
+    <header>
+        <h1>US Cashless Vending Machine Service</h1>
+        <h2>Please enter login details below: </h2>
+    </header>
+ 
+    <section>
+        {% if form.errors %}
+            <p>Your username and password didn't match, please try again.</p>
+        {% endif %}
+ 
+        <form method="POST" action="."> {% csrf_token %}
+            <p><label for="id_username">Username:</label></p>
+            {{ form.username }}
+            
+            <p><label for="id_password">Password:</label></p>
+            {{ form.password }}
+            
+            {% if next %}
+                <input type="hidden" name="next" value="{{ next }}" />
+            {% else %}
+                <input type="hidden" name="next" value="/display_qrcode" />
+            {% endif %}
+	    <p>
+            <input type="submit" value="/login" />
+	    </p>
+	    Not registered yet? Click <a href="/register">here</a>.
+        </form>
+    </section>
+{% endblock %}

@@ -1,0 +1,7 @@
+from django.conf.urls import patterns, url, include
+from encryption import views
+
+urlpatterns = patterns('',
+	url(r'public_key/$', views.display_public_key), 
+	url(r'test/$', views.display_public_key), 
+)
