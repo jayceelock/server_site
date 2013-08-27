@@ -5,9 +5,6 @@ from display_qrcode.models import ProductData
 from Crypto.PublicKey import ElGamal 
 from Crypto.Hash import MD5
 
-#from ezPyCrypto import key
-
-#from PyQRNative import *
 import qrcode
 
 import base64
@@ -24,9 +21,9 @@ def image(request):
     
     request.session.set_expiry(1)    
     
-    server_priv_key = Pickle.load(open("server_key.priv", 'r'))
+    server_priv_key = Pickle.load(open("/home/ubuntu/srv/server_site/server_key.priv", 'r'))
     
-    vending_pub_key = Pickle.load(open("vending_key.pub", 'r'))
+    vending_pub_key = Pickle.load(open("/home/ubuntu/srv/server_site/vending_key.pub", 'r'))
     
     try:
         input_data = input_product_code.split('[]', 2)
