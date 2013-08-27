@@ -1,4 +1,0 @@
-from django.http import HttpResponse
-
-def code_page(request):
-	return HttpResponse("Login page comes here")

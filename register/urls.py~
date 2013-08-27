@@ -1,6 +1,0 @@
-from django.conf.urls import patterns, url
-from register import user_reg
-
-urlpatterns = patterns('',
-	url(r'^$', views.user_reg), 
-)
