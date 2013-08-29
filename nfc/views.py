@@ -46,9 +46,9 @@ def affine_decrypt(encoded_password):
     
     a_num %= 26;
     
-    for a_inv in range(26):
-        if (((a_num * a_inv) % 26) == 1):
-            a = a_inv
+    for x in range(25):
+        if (((a_num * x) % 26) == 1):
+            a = x
     
     y = []
     cypher_index = []
