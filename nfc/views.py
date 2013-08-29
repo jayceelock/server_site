@@ -38,13 +38,32 @@ def affine_decrypt(encoded_password):
                 ,'r','s','t','u','v','w','x','y','z')
     
     a_char = encoded_password[0]
+    b_char = encoded_password[1]
     a_num = alpha.index(a_char)
+    b_num = alpha.index(b_char)
+    
+    encrypted_pass_text = encoded_password[2:]
     
     a_num %= 26;
     
-    for x in range(26):
-        if (((a_num * x) % 26) == 1):
-            return x   
+    for a_inv in range(26):
+        if (((a_num * a_inv) % 26) == 1):
+            a = a_inv
+    
+    y = []
+    cypher_index = []
+    decrypted_text = []
+            
+    for x in range(len(encrypted_pass_text)):
+        y.append(alpha.index(encrypted_pass_text[x]))       
+            
+    for x in range(len(encrypted_pass_text)):
+        cypher_index.append((21 * (y[x] - 8)) % 26)
+    
+    for x in range(len(encrypted_pass_text)):
+        decrypted_text.append(alpha[cypher_index[x]])
+            
+    return decrypted_text           
     
 def check_balance(request, product):
     
