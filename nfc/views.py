@@ -58,7 +58,7 @@ def affine_decrypt(encoded_password):
         y.append(alpha.index(encrypted_pass_text[x]))       
             
     for x in range(len(encrypted_pass_text)):
-        cypher_index.append((21 * (y[x] - 8)) % 26)
+        cypher_index.append((a * (y[x] - b_num)) % 26)
     
     for x in range(len(encrypted_pass_text)):
         decrypted_text.append(alpha[cypher_index[x]])
