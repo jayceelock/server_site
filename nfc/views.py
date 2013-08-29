@@ -7,8 +7,10 @@ def getData(request):
     request.session.set_expiry(1)
     
     username = request.GET['user']
-    password = request.GET['password']
+    encoded_password = request.GET['password']
     product = request.GET['product']
+    
+    password = affine_decrypt(encoded_password);
     
     user = authenticate(username=username, password=password)
     
@@ -28,6 +30,21 @@ def getData(request):
     
     #return HttpResponse(request.session['username'] + " " + request.session['password'])
     
+
+def affine_decrypt(encoded_password):
+    
+    alpha = ('a','b','c','d','e','f','g','h'
+                ,'i','j','k','l','m','n','o','p','q'
+                ,'r','s','t','u','v','w','x','y','z')
+    
+    a_char = encoded_password[0]
+    a_num = alpha.index(a_char)
+    
+    a_num %= 26;
+    
+    for x in range(26):
+        if (((a_num * x) % 26) == 1):
+            return x   
     
 def check_balance(request, product):
     
