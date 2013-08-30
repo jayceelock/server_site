@@ -63,7 +63,7 @@ def affine_decrypt(encoded_password):
     for x in range(len(encrypted_pass_text)):
         decrypted_text.append(alpha[cypher_index[x]])
             
-    return decrypted_text           
+    return ''.join(decrypted_text)           
     
 def check_balance(request, product):
     
