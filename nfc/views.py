@@ -10,8 +10,8 @@ def getData(request):
     encoded_password = request.GET['password']
     product = request.GET['product']
     
-    password = affine_decrypt(encoded_password);
-    
+    #password = affine_decrypt(encoded_password);
+    password = request.GET['password']
     user = authenticate(username=username, password=password)
     
     if user is not None:
