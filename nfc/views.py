@@ -64,7 +64,7 @@ def decrypt(encoded_text):
 #     f = open("app_private_key.pem", 'r')
 #     priv_key = RSA.importKey(f.read())
 #     f.close()
-    f = open("app_key.priv", 'r')
+    f = open("/home/ubuntu/srv/server_site/app_key.priv", 'r')
     priv_key = pickle.load(f)
     
     #pub_key = priv_key.publickey()
