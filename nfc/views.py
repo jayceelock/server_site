@@ -60,7 +60,7 @@ def check_balance(request, product):
     
     
 def decrypt(encoded_text):
-    f = open('mykey.pem','r')
+    f = open('app_private_key.pem','r')
     priv_key = RSA.importKey(f.read())
     f.close()
     
