@@ -71,6 +71,6 @@ def decrypt(encoded_text):
     
     encrypted_text = base64.b64decode(encoded_text)
     
-    plain_text = priv_key.decode(encrypted_text)
+    plain_text = priv_key.decrypt(encrypted_text)
     
     return plain_text
