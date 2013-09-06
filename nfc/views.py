@@ -15,6 +15,7 @@ def getData(request):
     product = request.GET['product']
     
     password = decrypt(encrypted_password);
+    return HttpResponse(password)
     #password = request.GET['password']
     user = authenticate(username=username, password=password)
     
@@ -64,7 +65,7 @@ def decrypt(encoded_text):
 #     f = open("app_private_key.pem", 'r')
 #     priv_key = RSA.importKey(f.read())
 #     f.close()
-    f = open("/home/ubuntu/srv/server_site/app_priv_key.pem", 'r')
+    f = open("/home/ubuntu/srv/server_site/private_key.pem", 'r')
     #priv_key = pickle.load(f)
     priv_key = RSA.importKey(f)
     
