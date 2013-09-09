@@ -15,7 +15,7 @@ def getData(request):
     product = request.GET['product']
     
     password = decrypt(encrypted_password);
-    return HttpResponse(password)
+#    return HttpResponse(password)
     #password = request.GET['password']
     user = authenticate(username=username, password=password)
     
@@ -71,8 +71,9 @@ def decrypt(encoded_text):
     
     #pub_key = priv_key.publickey()
     
-    encrypted_text = base64.urlsafe_b64decode(encoded_text)
+    encrypted_text = base64.urlsafe_b64decode(encoded_text.encode())
     
     plain_text = priv_key.decrypt(encrypted_text)
-    
+#    return HttpResponse(plain_text)
+#    return unicode(encrypted_text, "UTF-8")
     return plain_text
