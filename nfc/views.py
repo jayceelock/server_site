@@ -71,7 +71,7 @@ def decrypt(encoded_text):
     
     #pub_key = priv_key.publickey()
     
-    encrypted_text = base64.b64decode(encoded_text)
+    encrypted_text = base64.urlsafe_b64decode(encoded_text)
     
     plain_text = priv_key.decrypt(encrypted_text)
     
