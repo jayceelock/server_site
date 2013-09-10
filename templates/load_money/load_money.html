@@ -10,20 +10,15 @@
     </header>
     
     <section>
-	<p> You are now logged in as <b>{{ user_name }}</b>.</p>
 	<p> Your current account balance is <b>R{{ current_balance }}</b>.</p>
-	
-	% comment %}
  
 	<form method="POST" action=""> {% csrf_token %}
-	    	<p>Amount to load:</p>
-	    	{{ form.amount }}
-	    	<p><input type="submit"></p>
+	    <p>Amount to load:</p>
+	    	<input name="amount"/>
+	    <p><input type="submit"></p>
 	</form>
- 
-	{% endcomment %}
 	
-	<p>Please click <a href="/user_admin"> here</a> to go back to your user page, or <a href="/logout">here to log out.</a>
+	<p>Please click <a href="/user_admin"> here</a> to go back to your user page.</a>
     </section>
 	
 {% endblock %}
