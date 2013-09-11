@@ -4,17 +4,18 @@ from display_qrcode.models import ProductData
 
 from Crypto.PublicKey import RSA
 import base64
-import cPickle as pickle
 
 def getData(request):
     
     request.session.set_expiry(1)
     
-    username = request.GET['user']
+    encrypted_username = request.GET['user']
     encrypted_password = request.GET['password']
-    product = request.GET['product']
+    encrypted_product = request.GET['product']
     
-    password = decrypt(encrypted_password);
+    password = decrypt(encrypted_password)
+    username = decrypt(encrypted_username)
+    product = decrypt(encrypted_product)
 #    return HttpResponse(password)
     #password = request.GET['password']
     user = authenticate(username=username, password=password)
@@ -62,18 +63,12 @@ def check_balance(request, product):
     
     
 def decrypt(encoded_text):
-#     f = open("app_private_key.pem", 'r')
-#     priv_key = RSA.importKey(f.read())
-#     f.close()
+
     f = open("/home/ubuntu/srv/server_site/private_key.pem", 'r')
-    #priv_key = pickle.load(f)
     priv_key = RSA.importKey(f)
-    
-    #pub_key = priv_key.publickey()
     
     encrypted_text = base64.urlsafe_b64decode(encoded_text.encode())
     
     plain_text = priv_key.decrypt(encrypted_text)
-#    return HttpResponse(plain_text)
-#    return unicode(encrypted_text, "UTF-8")
+
     return plain_text
