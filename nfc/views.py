@@ -1,9 +1,10 @@
-from django.http import HttpResponse
-from django.contrib.auth import authenticate, login
-from display_qrcode.models import ProductData
-
 from Crypto.PublicKey import RSA
+from display_qrcode.models import ProductData
+from django.contrib.auth import authenticate, login
+from django.http import HttpResponse
 import base64
+import random
+
 
 def getData(request):
     
@@ -16,16 +17,24 @@ def getData(request):
     password = decrypt(encrypted_password)
     username = decrypt(encrypted_username)
     product = decrypt(encrypted_product)
-#    return HttpResponse(password)
-    #password = request.GET['password']
+    
     user = authenticate(username=username, password=password)
+    
+    
     
     if user is not None:
         if user.is_active:
             login(request, user)
+            try:
+                product = ProductData.objects.get(product_code = product)
+            except:
+                HttpResponse("Invalid product code")
             approved = check_balance(request, product)
             if approved == 1:
-                return HttpResponse("You have enough money!")
+                random_confirm_string = '%004x' % random.randrange(16**4) + product.product_code + '%004x' % random.randrange(16**4)
+                encrypted_confirm_string = encrypt(random_confirm_string)
+                
+                return HttpResponse(encrypted_confirm_string)
             else:
                 return HttpResponse("Nah bru, no cash.")
         else:
@@ -33,8 +42,7 @@ def getData(request):
         
     else:
         return HttpResponse("Account name and password are incorrect.")
-    
-    #return HttpResponse(request.session['username'] + " " + request.session['password'])           
+             
     
 def check_balance(request, product):
     
@@ -72,3 +80,13 @@ def decrypt(encoded_text):
     plain_text = priv_key.decrypt(encrypted_text)
 
     return plain_text
+
+def encrypt(original_text):
+    f = open("/home/ubuntu/srv/server_site/private_key.pem", 'r')
+    priv_key = RSA.importKey(f)
+    pub_key = priv_key.publickey()
+    
+    encrypted_text = pub_key.encrypt(original_text, 32)
+    encoded_text = base64.b64encode(encrypted_text)
+    
+    return encoded_text
