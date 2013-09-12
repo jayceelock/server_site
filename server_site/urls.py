@@ -7,6 +7,7 @@ import register.views
 import display_qrcode.views
 import user_admin.views
 import nfc.views
+import nfc_add_user.views
 import load_money.views
 
 admin.autodiscover()
@@ -21,5 +22,6 @@ urlpatterns = patterns('',
 	url(r'^login', 'django.contrib.auth.views.login'),
 	url(r'^nfc', nfc.views.getData),
 	url(r'^load_money', load_money.views.load),
+	url(r'^add_nfc_user', nfc_add_user.views.add_user),
 	url(r'^$', views.main_page),	
 )

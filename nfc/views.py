@@ -5,9 +5,7 @@ from django.http import HttpResponse
 import base64
 import random
 
-
 def getData(request):
-    
     request.session.set_expiry(1)
     
     encrypted_username = request.GET['user']
@@ -20,8 +18,6 @@ def getData(request):
     
     user = authenticate(username=username, password=password)
     
-    
-    
     if user is not None:
         if user.is_active:
             login(request, user)
@@ -31,7 +27,7 @@ def getData(request):
                 HttpResponse("Invalid product code")
             approved = check_balance(request, product)
             if approved == 1:
-                random_confirm_string = '%004x' % random.randrange(16**4) + product.product_code + '%004x' % random.randrange(16**4)
+                random_confirm_string = str(('%004x' % random.randrange(16**4) + product.product_code + '%008x' % random.randrange(16**8)).upper())
                 encrypted_confirm_string = encrypt(random_confirm_string)
                 
                 return HttpResponse(encrypted_confirm_string)
@@ -87,6 +83,6 @@ def encrypt(original_text):
     pub_key = priv_key.publickey()
     
     encrypted_text = pub_key.encrypt(original_text, 32)
-    encoded_text = base64.b64encode(encrypted_text)
+    encoded_text = base64.b64encode(encrypted_text[0])
     
     return encoded_text
