@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponse
 import base64
 import random
+import os
 
 def getData(request):
     request.session.set_expiry(1)
@@ -67,8 +68,10 @@ def check_balance(request, product):
     
     
 def decrypt(encoded_text):
-
-    f = open("/home/ubuntu/srv/server_site/private_key.pem", 'r')
+    
+    path = os.getcwd()
+    
+    f = open(path + "/private_key.pem", 'r')
     priv_key = RSA.importKey(f)
     
     encrypted_text = base64.urlsafe_b64decode(encoded_text.encode())
@@ -78,11 +81,14 @@ def decrypt(encoded_text):
     return plain_text
 
 def encrypt(original_text):
-    f = open("/home/ubuntu/srv/server_site/private_key.pem", 'r')
-    priv_key = RSA.importKey(f)
-    pub_key = priv_key.publickey()
     
-    encrypted_text = pub_key.encrypt(original_text, 32)
+    path = os.getcwd()
+    
+    f = open(path + "/private_key.pem", 'r')
+    priv_key = RSA.importKey(f)
+    #pub_key = priv_key.publickey()
+    
+    encrypted_text = priv_key.encrypt(original_text, 32)
     encoded_text = base64.b64encode(encrypted_text[0])
     
     return encoded_text

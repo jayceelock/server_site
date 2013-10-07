@@ -7,6 +7,11 @@ def add_user(request):
               username = request.GET['username'],
               email = request.GET['email'],
               password = request.GET['password'])
-    user.save()
+    
+    try:
+        user.save()
+        
+    except:
+        return HttpResponse("That username is already in use. Please try a different name.")    
     
     return HttpResponse("User saved")

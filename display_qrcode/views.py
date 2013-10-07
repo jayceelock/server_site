@@ -29,20 +29,13 @@ def image(request):
         input_data = input_product_code.split('[]', 2)
         encoded_string = input_data[0].split('**', 2)
         encoded_signature = input_data[1].split('**', 2)
-        #print encoded_prod_string
-        #print encoded_signature
         
         encrypted_string = (base64.urlsafe_b64decode(encoded_string[0]), base64.urlsafe_b64decode(encoded_string[1]))
         signature = (long(base64.urlsafe_b64decode(encoded_signature[0])), long(base64.urlsafe_b64decode(encoded_signature[1])))
-        #print encrypted_string
         
         decrypted_data = server_priv_key.decrypt(encrypted_string)
         product_code = decrypted_data[-4:].upper()
-        
-        #print product_code
-        #print encrypted_string
-        #print signature
-        #import pdb; pdb.set_trace()    
+           
         challenge = decrypted_data[4:8]
         
         hash_code = MD5.new(product_code).digest()
