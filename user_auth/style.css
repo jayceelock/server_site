@@ -1,8 +1,0 @@
-<style>
-.tdStyle
-{
-	background-image:url('{{ STATIC_URL }}images/uslogo.jpg');
-	background-repeat:no-repeat;
-	background-size:100%;
-}
-</style>

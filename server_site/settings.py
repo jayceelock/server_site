@@ -1,4 +1,6 @@
-# Django settings for server_site project.
+"""
+This is the Django site settings file.
+"""
 
 DEBUG = True
 TEMPLATE_DEBUG = True

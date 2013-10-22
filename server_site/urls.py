@@ -1,6 +1,10 @@
+"""
+This scipt maps the complete URL map of the whole server. It loads the appropriate 
+script when a server resource is requested.
+"""
+
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-#from encryption.views import generate_key
 
 import views
 import register.views
@@ -11,7 +15,6 @@ import nfc_add_user.views
 import load_money.views
 
 admin.autodiscover()
-#generate_key()
 
 urlpatterns = patterns('',
 	url(r'^admin', include(admin.site.urls)),
