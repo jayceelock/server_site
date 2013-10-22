@@ -1,3 +1,7 @@
+"""
+This script allows a user to buy a product using the NFC payment option.
+"""
+
 from Crypto.PublicKey import RSA
 from display_qrcode.models import ProductData
 from django.contrib.auth import authenticate, login
@@ -7,16 +11,21 @@ import random
 import os
 
 def getData(request):
+    
+    #Automatically log the user out after one second
     request.session.set_expiry(1)
     
+    #Extract the data from the URL request from the app
     encrypted_username = request.GET['user']
     encrypted_password = request.GET['password']
     encrypted_product = request.GET['product']
     
+    #Decrypt the data
     password = decrypt(encrypted_password)
     username = decrypt(encrypted_username)
     product = decrypt(encrypted_product)
     
+    #Perform the logon operation
     user = authenticate(username=username, password=password)
     
     if user is not None:
@@ -26,7 +35,11 @@ def getData(request):
                 product = ProductData.objects.get(product_code = product)
             except:
                 HttpResponse("Invalid product code")
+            
+            #Perfomr user balance check    
             approved = check_balance(request, product)
+            
+            #If the user has enough credits, the server returns an encrypted approval message
             if approved == 1:
                 random_confirm_string = str(('%004x' % random.randrange(16**4) + product.product_code + '%008x' % random.randrange(16**8)).upper())
                 encrypted_confirm_string = encrypt(random_confirm_string)
@@ -40,7 +53,8 @@ def getData(request):
     else:
         return HttpResponse("Account name and password are incorrect.")
              
-    
+
+#Function to check the users balance    
 def check_balance(request, product):
     
     try:
@@ -48,7 +62,7 @@ def check_balance(request, product):
     except:
         return HttpResponse("Profile does not exist yet")
     
-    try:                            #get details of current user
+    try:                           
         product = ProductData.objects.get(product_code = product)
     except:
         return HttpResponse("Invalid product code")
@@ -66,7 +80,8 @@ def check_balance(request, product):
     else:
         return 0
     
-    
+
+#Function to decrypt the data    
 def decrypt(encoded_text):
     
     path = os.getcwd()
@@ -80,13 +95,13 @@ def decrypt(encoded_text):
 
     return plain_text
 
+#Fucntion the encrypt the return data
 def encrypt(original_text):
     
     path = os.getcwd()
     
     f = open(path + "/private_key.pem", 'r')
     priv_key = RSA.importKey(f)
-    #pub_key = priv_key.publickey()
     
     encrypted_text = priv_key.encrypt(original_text, 32)
     encoded_text = base64.b64encode(encrypted_text[0])

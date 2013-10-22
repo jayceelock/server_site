@@ -1,3 +1,7 @@
+"""
+This script is responsible for using a URL request to make a transaction.
+"""
+
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from display_qrcode.models import ProductData
@@ -12,6 +16,7 @@ import random
 
 import cPickle as Pickle
 
+#Force login
 @login_required
 def image(request):
     try:
@@ -19,12 +24,15 @@ def image(request):
     except:
         return HttpResponse("Please scan a valid QR code.")
     
+    #Automatically log user out after 1 second
     request.session.set_expiry(1)    
     
+    #Retrievve keys from file
     server_priv_key = Pickle.load(open("/home/ubuntu/srv/server_site/server_key.priv", 'r'))
     
     vending_pub_key = Pickle.load(open("/home/ubuntu/srv/server_site/vending_key.pub", 'r'))
     
+    #Process, decode, decrypt and verify the data
     try:
         input_data = input_product_code.split('[]', 2)
         encoded_string = input_data[0].split('**', 2)
@@ -52,11 +60,12 @@ def image(request):
     except:
         return HttpResponse("Profile does not exist yet")
 
-    try:                            #get details of current user
+    try:
         product = ProductData.objects.get(product_code = product_code)
     except:
         return HttpResponse("Invalid product code")
     
+    #If user has enough money, subtract the product cost from his balance and save to database
     user_balance = profile.balance
     price = product.product_price
 
@@ -65,6 +74,7 @@ def image(request):
         profile.balance = user_balance
         profile.save()
         
+        #Prepare return QR Code
         rand_hex_block_1 = '%004x' % random.randrange(16**4)
         rand_hex_block_2 = '%008x' % random.randrange(16**8)
         
@@ -72,6 +82,7 @@ def image(request):
         
         encrypted_response_code = vending_pub_key.encrypt(confirm_code_string, 32)
         
+        #Encrypt, sign and encode the return code
         hash_code = MD5.new(challenge).digest()
         response_signature = server_priv_key.sign(hash_code, challenge)
         encoded_response_signature = base64.b64encode(str(response_signature[0])) + '**' + base64.b64encode(str(response_signature[1]))
@@ -80,6 +91,7 @@ def image(request):
 
         total_response = encoded_response_code + '[]' + encoded_response_signature
         
+        #Embed the return code into a QR Code
         qr = qrcode.QRCode(
                            version = None,
                            box_size = 7,
@@ -90,6 +102,7 @@ def image(request):
      
         im = qr.make_image()
          
+        #Display the code on the user's cellphone screen
         response = HttpResponse(mimetype="image/png")
         im.save(response, "PNG")
         return response

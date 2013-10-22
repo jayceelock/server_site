@@ -1,3 +1,8 @@
+"""
+Here the product model is created and added to the database. It is changable from 
+the admin page.
+"""
+
 from django.db import models
 
 class ProductData(models.Model):
@@ -5,5 +10,5 @@ class ProductData(models.Model):
 	product_description = models.CharField(max_length = 25)
 	product_price = models.DecimalField(max_digits = 6, decimal_places = 2)
 
-	def __unicode__(self):  # Python 3: def __str__(self):
-        	return self.product_code
+	def __unicode__(self):
+		return self.product_code
